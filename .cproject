@@ -157,7 +157,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders" />
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration artifactName="${ProjName}" configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="Ejercicio4STide" />
+			<resource resourceType="PROJECT" workspacePath="Ejercicio4ReactorSTide" />
 		</configuration>
 	</storageModule>
 </cproject>
