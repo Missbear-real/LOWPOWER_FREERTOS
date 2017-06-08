@@ -32,13 +32,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: ISEL_P4Copia.elf
+all: Ejercicio4STide.elf
 
 # Tool invocations
-ISEL_P4Copia.elf: $(OBJS) $(USER_OBJS)
+Ejercicio4STide.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"../STM32F051R8Tx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "ISEL_P4Copia.elf" @"objects.list" $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"../STM32F051R8Tx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "Ejercicio4STide.elf" @"objects.list" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -50,8 +50,8 @@ clean:
 
 post-build:
 	-@echo 'Generating binary and Printing size information:'
-	arm-none-eabi-objcopy -O binary "ISEL_P4Copia.elf" "ISEL_P4Copia.bin"
-	arm-none-eabi-size "ISEL_P4Copia.elf"
+	arm-none-eabi-objcopy -O binary "Ejercicio4STide.elf" "Ejercicio4STide.bin"
+	arm-none-eabi-size "Ejercicio4STide.elf"
 	-@echo ' '
 
 .PHONY: all clean dependents

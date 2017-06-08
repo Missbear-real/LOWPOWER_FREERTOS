@@ -72,7 +72,6 @@
 
 void MX_ADC_Init(void);
 void MX_DAC1_Init(void);
-
 /* USER CODE END Private defines */
 
 /**
