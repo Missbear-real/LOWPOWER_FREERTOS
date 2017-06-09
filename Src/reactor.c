@@ -5,27 +5,33 @@
  *      Author: kareen
  */
 
+/*
+ * reactor.c
+ *
+ *  Created on: 06/06/2017
+ *      Author: kareen
+ */
+
 #include "reactor.h"
-#include <stdlib.h>
 
 int
-timeval_less (const TickType_t a, const TickType_t b)
+tickval_less (const TickType_t a, const TickType_t b)
 {
-  return (a < b);
+  return (a <= b);
 }
 
 void
-timeval_add (TickType_t* res,
+tickval_add (TickType_t* res,
              const TickType_t a, const TickType_t b)
 {
-  res = a + b;
+  *res = (a + b);
 }
 
 void
-timeval_sub (TickType_t* res,
+tickval_sub (TickType_t* res,
              const TickType_t a, const TickType_t b)
 {
-  res = a-b;
+  *res = a - b;
 }
 
 
@@ -89,11 +95,11 @@ reactor_next_timeout (void)
 
   for (i = 0; i < r.n_ehs; ++i) {
     EventHandler* eh = r.ehs[i];
-    if (timeval_less (eh->next_activation, next)) {
+    if (tickval_less (eh->next_activation, next)) {
       next = eh->next_activation;
     }
   }
-  if (timeval_less (next, now)) {
+  if (tickval_less (next, now)) {
     next = now;
   }
   return &next;
@@ -107,14 +113,14 @@ reactor_handle_events (void)
   TickType_t* next_activation = reactor_next_timeout();
 
   now = xTaskGetTickCount();
-  timeval_sub (&timeout, next_activation, now);
-  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFE); //TOCAR AQUI
-  vTaskDelayUntil(now, timeout);
+  tickval_sub (&timeout, *next_activation, now);
+  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI); //TOCAR AQUI
+  vTaskDelay(timeout);
 
   now = xTaskGetTickCount();
   for (i = 0; i < r.n_ehs; ++i) {
     EventHandler* eh = r.ehs[i];
-    if (timeval_less (eh->next_activation, now)) {
+    if (tickval_less (eh->next_activation, now)) {
       event_handler_run (eh);
     }
   }

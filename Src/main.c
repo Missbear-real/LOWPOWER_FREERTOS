@@ -57,16 +57,14 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
 DAC_HandleTypeDef hdac1;
-int flag_ADC=0;
-int flag_button = 0;
 
-osThreadId defaultTaskHandle;
-osThreadId DACTaskHandle;
-osThreadId LDRtaskHandle;
+osThreadId ReactorTaskHandle;
 osMessageQId queue_lightHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+int flag_ADC=0;
+int flag_button = 0;
 
 /* USER CODE END PV */
 
@@ -74,7 +72,6 @@ osMessageQId queue_lightHandle;
 void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
-void StartDefaultTask(void const * argument);
 void DACwrite(struct event_handler_t* this);
 void LDRread(struct event_handler_t* this);
 void reactorTask(void const * argument);
@@ -100,7 +97,6 @@ static void read_value(fsm_t* this){
 	flag_ADC = 0;
 	val = LDR_GET();
 	xQueueSend(queue_lightHandle, &(val), 0);
-	//LDR_Start(&hadc);
 }
 static fsm_trans_t read_ldrm[] = {
   {READING_VALUE, new_value, READING_VALUE , read_value},
@@ -180,17 +176,10 @@ int main(void)
 
   /* USER CODE END 2 */
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  /*osThreadDef(defaultTask, StartDefaultTask, osPriorityIdle, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);*/
 
   /* definition and creation of ADCTask */
-  osThreadDef(DACTask, reactorTask, osPriorityNormal, 0, 128);
-  DACTaskHandle = osThreadCreate(osThread(DACTask), NULL );
-
-  /* definition and creation of LDRtask */
-  /*osThreadDef(LDRtask, LDRread, osPriorityAboveNormal, 0, 128);
-  LDRtaskHandle = osThreadCreate(osThread(LDRtask),readLDR_fsm );*/
+  osThreadDef(Reactor, reactorTask, osPriorityAboveNormal, 0, 128);
+  ReactorTaskHandle = osThreadCreate(osThread(Reactor), NULL );
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -384,20 +373,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 }
 /* USER CODE END 4 */
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
-{
-
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-	  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFE);
-    osDelay(7);
-  }
-  /* USER CODE END 5 */ 
-}
-
 /* DACread function */
 void DACwrite(struct event_handler_t* this)
 {
@@ -407,7 +382,7 @@ void DACwrite(struct event_handler_t* this)
 
 	fsm_fire(this->fsm);
 
-  timeval_add (&this->next_activation, this->next_activation, period);
+  tickval_add (&this->next_activation, this->next_activation, period);
   /* USER CODE END DACread */
 }
 
@@ -420,7 +395,7 @@ void LDRread(struct event_handler_t* this)
 
 	fsm_fire(this->fsm);
 
-  timeval_add (&this->next_activation, this->next_activation, period);
+  tickval_add (&this->next_activation, this->next_activation, period);
   /* USER CODE END DACread */
 }
 

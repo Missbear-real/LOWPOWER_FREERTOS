@@ -12,13 +12,6 @@
 #include "cmsis_os.h"
 #include "stm32f0xx.h"
 
-int timeval_less (const TickType_t a, const TickType_t b);
-void timeval_add (TickType_t* res,
-                  const TickType_t a, const TickType_t b);
-void timeval_sub (TickType_t* res,
-                  const TickType_t a, const TickType_t b);
-
-
 struct event_handler_t;
 typedef void (*eh_func_t) (struct event_handler_t*);
 
@@ -29,6 +22,12 @@ struct event_handler_t {
   fsm_t* fsm;
 };
 typedef struct event_handler_t EventHandler;
+
+int tickval_less (const TickType_t a, const TickType_t b);
+void tickval_add (TickType_t* res,
+                  const TickType_t a, const TickType_t b);
+void tickval_sub (TickType_t* res,
+                  const TickType_t a, const TickType_t b);
 
 void event_handler_init (EventHandler* eh, int prio, eh_func_t run, fsm_t* fsm);
 void event_handler_run (EventHandler* eh);
