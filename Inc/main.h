@@ -63,9 +63,9 @@
 #define SWCLK_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
-#define DARK_LEVEL 4095
+#define CLEAR_LEVEL 4095
 #define MEDIUM_LEVEL 3000
-#define CLEAR_LEVEL 2500
+#define DARK_LEVEL 2500
 
 #define DARKNESS 2000
 #define LIGHTNESS 3500

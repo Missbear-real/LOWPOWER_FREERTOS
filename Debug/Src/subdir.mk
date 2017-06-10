@@ -9,7 +9,6 @@ C_SRCS += \
 ../Src/ldr.c \
 ../Src/led.c \
 ../Src/main.c \
-../Src/reactor.c \
 ../Src/stm32f0xx_hal_msp.c \
 ../Src/stm32f0xx_it.c \
 ../Src/system_stm32f0xx.c 
@@ -20,7 +19,6 @@ OBJS += \
 ./Src/ldr.o \
 ./Src/led.o \
 ./Src/main.o \
-./Src/reactor.o \
 ./Src/stm32f0xx_hal_msp.o \
 ./Src/stm32f0xx_it.o \
 ./Src/system_stm32f0xx.o 
@@ -31,7 +29,6 @@ C_DEPS += \
 ./Src/ldr.d \
 ./Src/led.d \
 ./Src/main.d \
-./Src/reactor.d \
 ./Src/stm32f0xx_hal_msp.d \
 ./Src/stm32f0xx_it.d \
 ./Src/system_stm32f0xx.d 
@@ -42,7 +39,7 @@ Src/%.o: ../Src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
 	@echo %cd%
-	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F051x8 -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Inc" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Drivers/STM32F0xx_HAL_Driver/Inc" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Drivers/STM32F0xx_HAL_Driver/Inc/Legacy" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Drivers/CMSIS/Device/ST/STM32F0xx/Include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Middlewares/Third_Party/FreeRTOS/Source/include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Drivers/CMSIS/Include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -D__weak=__attribute__((weak)) -D__packed=__attribute__((__packed__)) -DUSE_HAL_DRIVER -DSTM32F051x8 -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Inc" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Drivers/STM32F0xx_HAL_Driver/Inc" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Drivers/STM32F0xx_HAL_Driver/Inc/Legacy" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Drivers/CMSIS/Device/ST/STM32F0xx/Include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Middlewares/Third_Party/FreeRTOS/Source/include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Drivers/CMSIS/Include" -I"C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Inc"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

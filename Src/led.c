@@ -18,7 +18,7 @@ void LED_INIT() {
 
 void LED_START() {
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
-	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, DARK_LEVEL);
+	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, CLEAR_LEVEL);
 
 }
 
