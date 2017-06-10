@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Inc
+HeaderPath=C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Inc
 HeaderFiles=FreeRTOSConfig.h;stm32f0xx_it.h;stm32f0xx_hal_conf.h;main.h;
-SourcePath=C:/Users/Miguel/workspaceSTM/Ejercicio4ReactorSTide/Src
+SourcePath=C:/Users/Miguel/workspaceSTM/Ejercicio4STide/Src
 SourceFiles=FreeRTOSConfig.h;stm32f0xx_it.h;stm32f0xx_hal_conf.h;main.h;freertos.c;stm32f0xx_it.c;stm32f0xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

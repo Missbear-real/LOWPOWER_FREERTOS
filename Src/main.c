@@ -49,7 +49,6 @@
 #include "ldr.h"
 #include "led.h"
 #include "fsm.h"
-#include "reactor.h"
 #include "read_ldr_states.h"
 #include "write_light_states.h"
 /* USER CODE END Includes */
@@ -58,7 +57,8 @@
 ADC_HandleTypeDef hadc;
 DAC_HandleTypeDef hdac1;
 
-osThreadId ReactorTaskHandle;
+osThreadId DACTaskHandle;
+osThreadId LDRtaskHandle;
 osMessageQId queue_lightHandle;
 
 /* USER CODE BEGIN PV */
@@ -72,9 +72,8 @@ int flag_button = 0;
 void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
-void DACwrite(struct event_handler_t* this);
-void LDRread(struct event_handler_t* this);
-void reactorTask(void const * argument);
+void DACwrite(void const * argument);
+void LDRread(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +95,7 @@ static void read_value(fsm_t* this){
 	uint32_t val;
 	flag_ADC = 0;
 	val = LDR_GET();
-	xQueueSend(queue_lightHandle, &(val), 0);
+	osMessagePut(queue_lightHandle, val, 0);
 }
 static fsm_trans_t read_ldrm[] = {
   {READING_VALUE, new_value, READING_VALUE , read_value},
@@ -120,13 +119,16 @@ static int button_no_pressed (fsm_t* this){
 
 static void adjust_light(fsm_t* this){
 	int level;
+	osEvent result;
 	flag_button = 0;
-	if(xQueueReceive(queue_lightHandle, &level, portMAX_DELAY)== pdPASS){
+	result = osMessageGet(queue_lightHandle, osWaitForever);
+	if(result.status == osEventMessage){
+		level = (int) result.value.v;
 		if(level < DARKNESS){
-			LED_SET(CLEAR_LEVEL);
+			LED_SET(DARK_LEVEL);
 		}
 		else if(level > LIGHTNESS){
-			LED_SET(DARK_LEVEL);
+			LED_SET(CLEAR_LEVEL);
 		}
 		else{
 			LED_SET(MEDIUM_LEVEL);
@@ -137,7 +139,7 @@ static void adjust_light(fsm_t* this){
 static void fixed_light(fsm_t* this){
 	flag_button=0;
 	LDR_STOP();
-	LED_SET(DARK_LEVEL);
+	LED_SET(CLEAR_LEVEL);
 }
 
 static fsm_trans_t write_dacm[] = {
@@ -175,11 +177,17 @@ int main(void)
     LED_START();
 
   /* USER CODE END 2 */
+    fsm_t* writeDAC_fsm = fsm_new (write_dacm);
+    fsm_t* readLDR_fsm = fsm_new (read_ldrm);
   /* Create the thread(s) */
 
   /* definition and creation of ADCTask */
-  osThreadDef(Reactor, reactorTask, osPriorityAboveNormal, 0, 128);
-  ReactorTaskHandle = osThreadCreate(osThread(Reactor), NULL );
+  osThreadDef(DACTask, DACwrite, osPriorityHigh, 0, 128);
+  DACTaskHandle = osThreadCreate(osThread(DACTask), writeDAC_fsm );
+
+  /* definition and creation of LDRtask */
+  osThreadDef(LDRtask, LDRread, osPriorityAboveNormal, 0, 128);
+  LDRtaskHandle = osThreadCreate(osThread(LDRtask),readLDR_fsm );
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -374,50 +382,34 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 /* USER CODE END 4 */
 
 /* DACread function */
-void DACwrite(struct event_handler_t* this)
+void DACwrite(void const * argument)
 {
   /* USER CODE BEGIN DACread */
-	static const TickType_t period = pdMS_TO_TICKS(75);
+	fsm_t* pcTaskName;
+	pcTaskName = ( fsm_t * ) argument;
+
   /* Infinite loop */
-
-	fsm_fire(this->fsm);
-
-  tickval_add (&this->next_activation, this->next_activation, period);
-  /* USER CODE END DACread */
-}
-
-void LDRread(struct event_handler_t* this)
-{
-  /* USER CODE BEGIN DACread */
-
-	static const TickType_t period = pdMS_TO_TICKS(50);
-  /* Infinite loop */
-
-	fsm_fire(this->fsm);
-
-  tickval_add (&this->next_activation, this->next_activation, period);
+  for(;;)
+  {
+	fsm_fire(pcTaskName);
+    osDelay(75);
+  }
   /* USER CODE END DACread */
 }
 
 /* LDRwrite function */
-void reactorTask(void const * argument)
+void LDRread(void const * argument)
 {
   /* USER CODE BEGIN LDRwrite */
+	fsm_t* pcTaskName;
+	pcTaskName = ( fsm_t * ) argument;
 
   /* Infinite loop */
-	  EventHandler eh1, eh2;
-	    fsm_t* writeDAC_fsm = fsm_new (write_dacm);
-	    fsm_t* readLDR_fsm = fsm_new (read_ldrm);
-	  reactor_init ();
-
-	  event_handler_init (&eh1, 1, DACwrite, writeDAC_fsm);
-	  event_handler_init (&eh2, 2, LDRread, readLDR_fsm);
-	  reactor_add_handler (&eh2);
-	  reactor_add_handler (&eh1);
-
-	  while (1) {
-	    reactor_handle_events ();
-	  }
+  for(;;)
+  {
+	fsm_fire(pcTaskName);
+    osDelay(50);
+  }
   /* USER CODE END LDRwrite */
 }
 
